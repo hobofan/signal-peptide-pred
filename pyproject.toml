@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "tensorflow-poetry"
+version = "0.1.0"
+description = ""
+authors = ["Maximilian Goisser <goisser94@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+# tensorflow = { git = "https://github.com/tensorflow/tensorflow.git", rev = "6fa83d70b7bc4426b17b0d8911aa7a977855348f" }
+# tensorflow = { git = "https://github.com/tensorflow/tensorflow.git", branch = "master" }
+tf-estimator-nightly = {version = "=2.0.0.dev2019112709", allows-prereleases = true}
+tf-nightly = {version = "=2.1.0.dev20191127", allows-prereleases = true}
+biopython = "^1.75"
+pandas = "^0.25.3"
+numpy = "^1.17"
+scikit-learn = "^0.21.3"
+tfa-nightly = {version = "=0.7.0.dev20191127", allows-prereleases = true}
+cachetools = "^3.1"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
+
+[tool.black]
+line-length = 100
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
