@@ -4,14 +4,11 @@ from CRF import CRF
 from crf_loss import ConditionalRandomFieldLoss
 from sklearn import preprocessing
 from tensorflow import keras
-from tensorflow.keras import datasets, layers, models
+from tensorflow.keras import layers, models
 import random
 import Bio
 import cachetools
-import functools
 import numpy as np
-import pandas as pd
-import tensorflow as tf
 import tensorflow_addons as tfa
 
 kingdoms = ["EUKARYA", "ARCHAEA", "NEGATIVE", "POSITIVE"]

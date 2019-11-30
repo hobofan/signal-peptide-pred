@@ -14,6 +14,7 @@ numpy = "^1.17"
 scikit-learn = "^0.21.3"
 tfa-nightly = {version = "=0.7.0.dev20191127", allows-prereleases = true}
 cachetools = "^3.1"
+flake8 = "^3.7"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^18.3-alpha.0", allows-prereleases = true}
