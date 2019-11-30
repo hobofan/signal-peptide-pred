@@ -9,6 +9,7 @@ import random
 import Bio
 import cachetools
 import numpy as np
+import tensorflow as tf
 import tensorflow_addons as tfa
 
 kingdoms = ["EUKARYA", "ARCHAEA", "NEGATIVE", "POSITIVE"]
@@ -66,6 +67,41 @@ position_specific_classes_enc = preprocessing.LabelEncoder()
 position_specific_classes_enc.fit(
     np.array(position_specific_classes).reshape((len(position_specific_classes), 1))
 )
+
+# Callback that prints out the expected and predicted sequence of position-specific classes
+# for a number of samples
+class SamplePredictionsCallback(tf.keras.callbacks.Callback):
+    def __init__(self, data_sequences, data_kingdoms, data_class_sequences, data_ids, position_specific_classes_enc, sample_size=5):
+        self.data_sequences = data_sequences
+        self.data_kingdoms = data_kingdoms
+        self.data_class_sequences = data_class_sequences
+        self.data_ids = data_ids
+
+        self.position_specific_classes_enc = position_specific_classes_enc
+
+        self.sample_size = sample_size
+
+        super().__init__()
+
+    def on_test_begin(self, a):
+        for sample_i in random.sample(range(0, len(self.data_sequences) - 1), self.sample_size):
+            input_sequence = self.data_sequences[sample_i]
+            input_kingdom = self.data_kingdoms[sample_i]
+            expected_class_sequence = self.data_class_sequences[sample_i]
+            vld_id = self.data_ids[sample_i]
+
+            pred = self.model.predict(
+                {
+                    "aa_sequence": np.expand_dims(input_sequence, axis=0),
+                    "kingdom": np.expand_dims(input_kingdom, axis=0),
+                }
+            )[0]
+            print("ID:", vld_id)
+            print(
+                "expected  :",
+                classes_sequence_to_letters(expected_class_sequence, self.position_specific_classes_enc),
+            )
+            print("prediction:", classes_sequence_to_letters(pred, self.position_specific_classes_enc))
 
 
 def get_replacement_score(a, b, replacement_matrix):
@@ -214,19 +250,6 @@ def build_set(max_length=0, dataset_path="train_set.fasta"):
     return (np.array(input_tensors), np.array(input_kingdoms), np.array(output_class_sequence), ids)
 
 
-def build_old_model():
-    model = models.Sequential()
-    model.add()
-    model.add(layers.Bidirectional(layers.LSTM(64, return_sequences=True), merge_mode="mul"))
-    model.add(layers.Conv1D(64, (5), activation="relu"))
-    model.add(
-        layers.Conv1D(9, (1), activation="relu")
-    )  # 9 = "matching the number of position-specific classes"
-    model.add(tfa.text.crf.CrfDecodeForwardRnnCell([70]))
-
-    model.summary()
-
-
 def build_model():
     sequence_input = keras.Input(shape=(70, 20), name="aa_sequence")
     kingdom_input = keras.Input(shape=(70, 4), name="kingdom")
@@ -255,32 +278,12 @@ def build_model():
     )
     (input_sequences, input_kingdoms, output_class_sequence, _) = build_set(max_length=0)
 
-    def sample_predictions(epoch, logs):
-        sample_size = 5
-        for sample_i in random.sample(range(0, len(vld_input_sequences) - 1), sample_size):
-            input_sequence = vld_input_sequences[sample_i]
-            input_kingdom = vld_input_kingdoms[sample_i]
-            expected_class_sequence = vld_output_class_sequence[sample_i]
-            vld_id = vld_ids[sample_i]
-
-            pred = model.predict(
-                {
-                    "aa_sequence": np.expand_dims(input_sequence, axis=0),
-                    "kingdom": np.expand_dims(input_kingdom, axis=0),
-                }
-            )[0]
-            print("ID:", vld_id)
-            print(
-                "expected  :",
-                classes_sequence_to_letters(expected_class_sequence, position_specific_classes_enc),
-            )
-            print("prediction:", classes_sequence_to_letters(pred, position_specific_classes_enc))
 
     callbacks = [
         keras.callbacks.ModelCheckpoint(
             filepath="./tf_ckpt/mymodel_{epoch}.h5", save_best_only=True, verbose=1
         ),
-        keras.callbacks.LambdaCallback(on_epoch_end=sample_predictions),
+        SamplePredictionsCallback(vld_input_sequences, vld_input_kingdoms, vld_output_class_sequence, vld_ids, position_specific_classes_enc)
     ]
     model.fit(
         {"aa_sequence": input_sequences, "kingdom": input_kingdoms},
