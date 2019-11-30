@@ -38,7 +38,6 @@ class ConditionalRandomFieldLoss(object):
         if not isinstance(crf_layer, CRF):
             raise ValueError("Last layer must be CRF for use {}.".format(self.__class__.__name__))
 
-        print("y_true shape", y_true)
         loss_vector = crf_layer.get_loss(y_true, y_pred)
 
         return tf.keras.backend.mean(loss_vector)
