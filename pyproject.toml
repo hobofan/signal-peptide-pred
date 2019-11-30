@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "signal-peptide-prep"
+name = "signal-peptide-pred"
 version = "0.1.0"
 description = ""
 authors = ["Maximilian Goisser <goisser94@gmail.com>"]
