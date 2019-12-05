@@ -230,6 +230,10 @@ def build_set(max_length=0, dataset_path="train_set.fasta"):
             if len(input_tensors) == max_length:
                 continue
 
+        # TODO: skipping non 70 length sequence for now; ISSUE #1
+        if int(len(record)) != 140:
+            continue
+
         half_len = int(len(record) / 2)
 
         sequence = record[0:half_len]
@@ -264,6 +268,7 @@ def build_model():
     # 9 = "matching the number of position-specific classes"
     cnn3 = layers.Dropout(0.1)(layers.Conv1D(9, (1), padding="causal", activation="relu")(cnn2))
     crf = CRF(9, use_kernel=False, name="crf")(cnn3)
+    crf_loss = ConditionalRandomFieldLoss()
 
     outputs = {"crf": crf}
     model = keras.Model(inputs=[sequence_input, kingdom_input], outputs=outputs)
@@ -271,7 +276,7 @@ def build_model():
     model.summary()
 
     opt = keras.optimizers.SGD(0.005)
-    model.compile(optimizer=opt, loss={"crf": ConditionalRandomFieldLoss()}, metrics=["acc"])
+    model.compile(optimizer=opt, loss={"crf": crf_loss}, metrics=["acc"])
 
     (vld_input_sequences, vld_input_kingdoms, vld_output_class_sequence, vld_ids) = build_set(
         max_length=0, dataset_path="benchmark_set.fasta"

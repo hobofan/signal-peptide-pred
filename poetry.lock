@@ -199,6 +199,23 @@ version = "0.14.0"
 
 [[package]]
 category = "main"
+description = "Deep Learning for humans"
+name = "keras"
+optional = false
+python-versions = "*"
+version = "2.3.1"
+
+[package.dependencies]
+h5py = "*"
+keras-applications = ">=1.0.6"
+keras-preprocessing = ">=1.0.5"
+numpy = ">=1.9.1"
+pyyaml = "*"
+scipy = ">=0.14"
+six = ">=1.9.0"
+
+[[package]]
+category = "main"
 description = "Reference implementations of popular deep learning models"
 name = "keras-applications"
 optional = false
@@ -209,6 +226,21 @@ version = "1.0.8"
 h5py = "*"
 numpy = ">=1.9.1"
 
+[[package]]
+category = "main"
+description = "Keras Deep Learning for Python, Community Contributions"
+name = "keras-contrib"
+optional = false
+python-versions = "*"
+version = "2.0.8"
+
+[package.dependencies]
+keras = "*"
+
+[package.source]
+reference = "382f6a2b7739064a1281c1cacdb792bb96436f27"
+type = "git"
+url = "https://github.com/keras-team/keras-contrib.git"
 [[package]]
 category = "main"
 description = "Easy data preprocessing and data augmentation for deep learning models"
@@ -345,6 +377,14 @@ name = "pytz"
 optional = false
 python-versions = "*"
 version = "2019.3"
+
+[[package]]
+category = "main"
+description = "YAML parser and emitter for Python"
+name = "pyyaml"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "5.1.2"
 
 [[package]]
 category = "main"
@@ -539,7 +579,7 @@ python-versions = "*"
 version = "1.11.2"
 
 [metadata]
-content-hash = "f0078474813d81fc2e3a1c1fad398071375851d8f23e95417be6d2250e03fb22"
+content-hash = "3a07f3c14e75a2074b83c51b786c32ea69077b2623b298ef4ec3b7accbfe83ca"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -563,7 +603,9 @@ grpcio = ["0419ae5a45f49c7c40d9ae77ae4de9442431b7822851dfbbe56ee0eacb5e5654", "1
 h5py = ["063947eaed5f271679ed4ffa36bb96f57bc14f44dd4336a827d9a02702e6ce6b", "13c87efa24768a5e24e360a40e0bc4c49bcb7ce1bb13a3a7f9902cec302ccd36", "16ead3c57141101e3296ebeed79c9c143c32bdd0e82a61a2fc67e8e6d493e9d1", "3dad1730b6470fad853ef56d755d06bb916ee68a3d8272b3bab0c1ddf83bb99e", "51ae56894c6c93159086ffa2c94b5b3388c0400548ab26555c143e7cfa05b8e5", "54817b696e87eb9e403e42643305f142cd8b940fe9b3b490bbf98c3b8a894cf4", "549ad124df27c056b2e255ea1c44d30fb7a17d17676d03096ad5cd85edb32dc1", "6998be619c695910cb0effe5eb15d3a511d3d1a5d217d4bd0bebad1151ec2262", "6ef7ab1089e3ef53ca099038f3c0a94d03e3560e6aff0e9d6c64c55fb13fc681", "769e141512b54dee14ec76ed354fcacfc7d97fea5a7646b709f7400cf1838630", "79b23f47c6524d61f899254f5cd5e486e19868f1823298bc0c29d345c2447172", "7be5754a159236e95bd196419485343e2b5875e806fe68919e087b6351f40a70", "84412798925dc870ffd7107f045d7659e60f5d46d1c70c700375248bf6bf512d", "86868dc07b9cc8cb7627372a2e6636cdc7a53b7e2854ad020c9e9d8a4d3fd0f5", "8bb1d2de101f39743f91512a9750fb6c351c032e5cd3204b4487383e34da7f75", "a5f82cd4938ff8761d9760af3274acf55afc3c91c649c50ab18fcff5510a14a5", "aac4b57097ac29089f179bbc2a6e14102dd210618e94d77ee4831c65f82f17c0", "bffbc48331b4a801d2f4b7dac8a72609f0b10e6e516e5c480a3e3241e091c878", "c0d4b04bbf96c47b6d360cd06939e72def512b20a18a8547fa4af810258355d5", "c54a2c0dd4957776ace7f95879d81582298c5daf89e77fb8bee7378f132951de", "cbf28ae4b5af0f05aa6e7551cee304f1d317dbed1eb7ac1d827cee2f1ef97a99", "d3c59549f90a891691991c17f8e58c8544060fdf3ccdea267100fa5f561ff62f", "d7ae7a0576b06cb8e8a1c265a8bc4b73d05fdee6429bffc9a26a6eb531e79d72", "ecf4d0b56ee394a0984de15bceeb97cbe1fe485f1ac205121293fc44dcf3f31f", "f0e25bb91e7a02efccb50aba6591d3fe2c725479e34769802fcdd4076abfa917", "f23951a53d18398ef1344c186fb04b26163ca6ce449ebd23404b153fd111ded9", "ff7d241f866b718e4584fa95f520cb19405220c501bd3a53ee11871ba5166ea2"]
 idna = ["c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407", "ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"]
 joblib = ["006108c7576b3eb6c5b27761ddbf188eb6e6347696325ab2027ea1ee9a4b922d", "6fcc57aacb4e89451fd449e9412687c51817c3f48662c3d8f38ba3f8a0a193ff"]
+keras = ["321d43772006a25a1d58eea17401ef2a34d388b588c9f7646c34796151ebc8cc", "d08a57bd63546175f8f19232ba05906514d419da3e0af8ef7437fa1c11442e20"]
 keras-applications = ["5579f9a12bcde9748f4a12233925a59b93b73ae6947409ff34aa2ba258189fe5", "df4323692b8c1174af821bf906f1e442e63fa7589bf0f1230a0b6bdc5a810c95"]
+keras-contrib = []
 keras-preprocessing = ["44aee5f2c4d80c3b29f208359fcb336df80f293a0bb6b1c738da43ca206656fb", "5a8debe01d840de93d49e05ccf1c9b81ae30e210d34dacbcc47aeb3049b528e5"]
 markdown = ["2e50876bcdd74517e7b71f3e7a76102050edec255b3983403f1a63e7c8a41e7a", "56a46ac655704b91e5b7e6326ce43d5ef72411376588afa1dd90e881b83c7e8c"]
 mccabe = ["ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42", "dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"]
@@ -578,6 +620,7 @@ pycodestyle = ["95a2219d12372f05704562a14ec30bc76b05a5b297b21a5dfe3f6fac3491ae56
 pyflakes = ["17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0", "d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2"]
 python-dateutil = ["73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c", "75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"]
 pytz = ["1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d", "b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"]
+pyyaml = ["0113bc0ec2ad727182326b61326afa3d1d8280ae1122493553fd6f4397f33df9", "01adf0b6c6f61bd11af6e10ca52b7d4057dd0be0343eb9283c878cf3af56aee4", "5124373960b0b3f4aa7df1707e63e9f109b5263eca5976c66e08b1c552d4eaf8", "5ca4f10adbddae56d824b2c09668e91219bb178a1eee1faa56af6f99f11bf696", "7907be34ffa3c5a32b60b95f4d95ea25361c951383a894fec31be7252b2b6f34", "7ec9b2a4ed5cad025c2278a1e6a19c011c80a3caaac804fd2d329e9cc2c287c9", "87ae4c829bb25b9fe99cf71fbb2140c448f534e24c998cc60f39ae4f94396a73", "9de9919becc9cc2ff03637872a440195ac4241c80536632fffeb6a1e25a74299", "a5a85b10e450c66b49f98846937e8cfca1db3127a9d5d1e31ca45c3d0bef4c5b", "b0997827b4f6a7c286c01c5f60384d218dca4ed7d9efa945c3e1aa623d5709ae", "b631ef96d3222e62861443cc89d6563ba3eeb816eeb96b2629345ab795e53681", "bf47c0607522fdbca6c9e817a6e81b08491de50f3766a7a0e6a5be7905961b41", "f81025eddd0327c7d4cfe9b62cf33190e1e736cc6e97502b3ec425f574b3e7a8"]
 requests = ["11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4", "9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"]
 requests-oauthlib = ["7f71572defaecd16372f9006f33c2ec8c077c3cfa6f5911a9a90202beb513f3d", "b4261601a71fd721a8bd6d7aa1cc1d6a8a93b4a9f5e96626f8e4d91e8beeaa6a", "fa6c47b933f01060936d87ae9327fead68768b69c6c9ea2109c48be30f2d4dbc"]
 rsa = ["14ba45700ff1ec9eeb206a2ce76b32814958a98e372006c8fb76ba820211be66", "1a836406405730121ae9823e19c6e806c62bbad73f890574fff50efa4122c487"]
