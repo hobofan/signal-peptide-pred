@@ -3,13 +3,12 @@ from CRF import CRF
 from crf_loss import ConditionalRandomFieldLoss
 from sklearn import preprocessing
 from tensorflow import keras
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers
 import random
 import numpy as np
 import tensorflow as tf
-import tensorflow_addons as tfa
 
-from constants import kingdoms, sp_types, position_specific_classes
+from constants import Kingdom, SPType, PositionSpecificLetter
 from data_transform import (
     classes_sequence_to_letters,
     input_from_sequence,
@@ -17,14 +16,14 @@ from data_transform import (
 )
 
 kingdoms_encoder = preprocessing.OneHotEncoder()
-kingdoms_encoder.fit(np.array(kingdoms).reshape((len(kingdoms), 1)))
+kingdoms_encoder.fit(np.array(Kingdom.values()).reshape((len(Kingdom.values()), 1)))
 
 sp_types_encoder = preprocessing.OneHotEncoder()
-sp_types_encoder.fit(np.array(sp_types).reshape((len(sp_types), 1)))
+sp_types_encoder.fit(np.array(SPType.values()).reshape((len(SPType.values()), 1)))
 
 position_specific_classes_enc = preprocessing.LabelEncoder()
 position_specific_classes_enc.fit(
-    np.array(position_specific_classes).reshape((len(position_specific_classes), 1))
+    np.array(PositionSpecificLetter.values()).reshape((len(PositionSpecificLetter.values()), 1))
 )
 
 # Callback that prints out the expected and predicted sequence of position-specific classes

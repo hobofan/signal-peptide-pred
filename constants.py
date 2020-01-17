@@ -1,47 +1,64 @@
-kingdoms = ["EUKARYA", "ARCHAEA", "NEGATIVE", "POSITIVE"]
-sp_types = ["NO_SP", "SP", "TAT", "LIPO"]
-ann_letters = [
-    # inner
-    "I",
-    # outer
-    "O",
-    # tm_in_out | tm_out_in
-    "M",
-    # signal_SecSP1 | cs_SP1
-    "S",
-    # signal_SecSP2 | cs_SP2
-    "L",
-    # signal_TatSP1 | cs_SP1
-    "T",
-]
-position_specific_classes = [
-    # S
-    "signal_SecSP1",
-    # Z
-    "signal_SecSP2",
-    # T
-    "signal_TatSP1",
-    # C
-    "cs_SP1",
-    # K
-    "cs_SP2",
-    # O
-    "outer",
-    # I
-    "inner",
-    # L (Leaving)
-    "tm_in_out",
-    # E (Entering)
-    "tm_out_in",
-]
-position_specific_letters = {
-    "signal_SecSP1": "S",
-    "signal_SecSP2": "Z",
-    "signal_TatSP1": "T",
-    "cs_SP1": "C",
-    "cs_SP2": "K",
-    "outer": "O",
-    "inner": "I",
-    "tm_in_out": "L",
-    "tm_out_in": "E",
-}
+from enum import Enum
+
+
+class Kingdom(Enum):
+    EUKARYA = "EUKARYA"
+    ARCHAEA = "ARCHAEA"
+    # Gram-negative
+    NEGATIVE = "NEGATIVE"
+    # Gram-positive
+    POSITIVE = "POSITIVE"
+
+    @classmethod
+    def values(cls):
+        return [e.value for e in cls]
+
+
+class SPType(Enum):
+    # No signal peptide
+    NO_SP = "NO_SP"
+    # Sec/SP1
+    SP = "SP"
+    # Tat/SP1
+    TAT = "TAT"
+    # Sec/SP2
+    LIPO = "LIPO"
+
+    @classmethod
+    def values(cls):
+        return [e.value for e in cls]
+
+
+class AnnotationLetter(Enum):
+    INNER = "I"
+    OUTER = "O"
+    TRANSMEMBRANE = "M"
+    # Includes cleavage site AA
+    SIGNAL_SEC_SP1 = "S"
+    # Includes cleavage site AA
+    SIGNAL_SEC_SP2 = "L"
+    # Includes cleavage site AA
+    SIGNAL_TAT_SP1 = "T"
+
+
+class PositionSpecificLetter(Enum):
+    """Position-specfic annotation of a letter (= amino acid).
+
+    In addition to the general letter annotation, it also adds position-specific
+    information based on the neighboring letters, e.g. whether a transmembrane amino acid
+    is entering or leaving the membrane.
+    """
+
+    SIGNAL_SEC_SP1 = "S"
+    SIGNAL_SEC_SP2 = "Z"
+    SIGNAL_TAT_SP1 = "T"
+    CLEAVAGE_SITE_SP1 = "C"
+    CLEAVAGE_SITE_SP2 = "K"
+    OUTER = "O"
+    INNER = "I"
+    TRANSMEMBRANE_IN_OUT = "L"
+    TRANSMEMBRANE_OUT_IN = "E"
+
+    @classmethod
+    def values(cls):
+        return [e.value for e in cls]

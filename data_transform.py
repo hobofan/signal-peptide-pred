@@ -3,7 +3,7 @@ import numpy as np
 import cachetools
 from Bio.SubsMat import MatrixInfo
 
-from constants import position_specific_letters
+from constants import PositionSpecificLetter, AnnotationLetter
 
 
 def get_replacement_score(a, b, replacement_matrix):
@@ -65,43 +65,48 @@ def classes_sequence_from_ann_sequence(sequence, enc):
         next_letter = sequence[i + 1] if i + 1 < len(sequence) else None
 
         position_specific_class = None
+        letter = AnnotationLetter(letter)
 
-        if letter == "I":
-            position_specific_class = "inner"
-            prev_inner_outer = "I"
-        elif letter == "O":
-            position_specific_class = "outer"
-            prev_inner_outer = "O"
-        elif letter == "M":
-            if prev_letter == "M":
-                if prev_inner_outer == "I":
-                    position_specific_class = "tm_in_out"
-                elif prev_inner_outer == "O":
-                    position_specific_class = "tm_out_in"
-            elif prev_letter == "I" or prev_inner_outer == "I":
-                position_specific_class = "tm_in_out"
-            elif prev_letter == "O" or prev_inner_outer == "O":
-                position_specific_class = "tm_out_in"
-        elif letter == "S":
-            if next_letter == "S":
-                position_specific_class = "signal_SecSP1"
+        if letter == AnnotationLetter.INNER:
+            position_specific_class = PositionSpecificLetter.INNER
+            prev_inner_outer = AnnotationLetter.INNER
+        elif letter == AnnotationLetter.OUTER:
+            position_specific_class = PositionSpecificLetter.OUTER
+            prev_inner_outer = AnnotationLetter.OUTER
+        elif letter == AnnotationLetter.TRANSMEMBRANE:
+            if prev_letter == AnnotationLetter.TRANSMEMBRANE:
+                if prev_inner_outer == AnnotationLetter.INNER:
+                    position_specific_class = PositionSpecificLetter.TRANSMEMBRANE_IN_OUT
+                elif prev_inner_outer == AnnotationLetter.OUTER:
+                    position_specific_class = PositionSpecificLetter.TRANSMEMBRANE_OUT_IN
+            elif (
+                prev_letter == AnnotationLetter.INNER or prev_inner_outer == AnnotationLetter.INNER
+            ):
+                position_specific_class = PositionSpecificLetter.TRANSMEMBRANE_IN_OUT
+            elif (
+                prev_letter == AnnotationLetter.OUTER or prev_inner_outer == AnnotationLetter.OUTER
+            ):
+                position_specific_class = PositionSpecificLetter.TRANSMEMBRANE_OUT_IN
+        elif letter == AnnotationLetter.SIGNAL_SEC_SP1:
+            if next_letter == AnnotationLetter.SIGNAL_SEC_SP1:
+                position_specific_class = PositionSpecificLetter.SIGNAL_SEC_SP1
             else:
-                position_specific_class = "cs_SP1"
-        elif letter == "L":
-            if next_letter == "L":
-                position_specific_class = "signal_SecSP2"
+                position_specific_class = PositionSpecificLetter.CLEAVAGE_SITE_SP1
+        elif letter == AnnotationLetter.SIGNAL_SEC_SP2:
+            if next_letter == AnnotationLetter.SIGNAL_SEC_SP2:
+                position_specific_class = PositionSpecificLetter.SIGNAL_SEC_SP2
             else:
-                position_specific_class = "cs_SP2"
-        elif letter == "T":
-            if next_letter == "T":
-                position_specific_class = "signal_TatSP1"
+                position_specific_class = PositionSpecificLetter.CLEAVAGE_SITE_SP2
+        elif letter == AnnotationLetter.SIGNAL_TAT_SP1:
+            if next_letter == AnnotationLetter.SIGNAL_TAT_SP1:
+                position_specific_class = PositionSpecificLetter.SIGNAL_TAT_SP1
             else:
-                position_specific_class = "cs_SP1"
+                position_specific_class = PositionSpecificLetter.CLEAVAGE_SITE_SP1
 
         if position_specific_class is None:
             print("Unexpected case", prev_letter, letter, next_letter)
 
-        transformed = enc.transform([position_specific_class])
+        transformed = enc.transform([position_specific_class.value])
         classes_sequence.append(transformed)
 
     seq_tensor = np.array(classes_sequence).reshape((70))
@@ -114,8 +119,7 @@ def classes_sequence_from_ann_sequence(sequence, enc):
 def classes_sequence_to_letters(seq_tensor, enc):
     letters = []
     for n in seq_tensor:
-        klass = enc.inverse_transform([n])[0]
-        letter = position_specific_letters[klass]
+        letter = enc.inverse_transform([n])[0]
         letters.append(letter)
 
     return "".join(letters)
