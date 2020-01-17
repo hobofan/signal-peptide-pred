@@ -34,16 +34,20 @@ class SamplePredictionsCallback(tf.keras.callbacks.Callback):
         data_sequences,
         data_kingdoms,
         data_class_sequences,
+        data_sp_types,
         data_ids,
         position_specific_classes_enc,
+        sp_types_enc,
         sample_size=5,
     ):
         self.data_sequences = data_sequences
         self.data_kingdoms = data_kingdoms
         self.data_class_sequences = data_class_sequences
+        self.data_sp_types = data_sp_types
         self.data_ids = data_ids
 
         self.position_specific_classes_enc = position_specific_classes_enc
+        self.sp_types_enc = sp_types_enc
 
         self.sample_size = sample_size
 
@@ -54,6 +58,7 @@ class SamplePredictionsCallback(tf.keras.callbacks.Callback):
             input_sequence = self.data_sequences[sample_i]
             input_kingdom = self.data_kingdoms[sample_i]
             expected_class_sequence = self.data_class_sequences[sample_i]
+            expected_sp_type = self.data_sp_types[sample_i]
             vld_id = self.data_ids[sample_i]
 
             pred = self.model.predict(
@@ -61,17 +66,25 @@ class SamplePredictionsCallback(tf.keras.callbacks.Callback):
                     "aa_sequence": np.expand_dims(input_sequence, axis=0),
                     "kingdom": np.expand_dims(input_kingdom, axis=0),
                 }
-            )[0]
+            )
+            sequence_pred = pred[0][0]
+            sp_type_pred = pred[1][0]
+
             print("ID:", vld_id)
             print(
-                "expected  :",
+                "expected SEQ  :",
                 classes_sequence_to_letters(
                     expected_class_sequence, self.position_specific_classes_enc
                 ),
             )
             print(
-                "prediction:", classes_sequence_to_letters(pred, self.position_specific_classes_enc)
+                "prediction SEQ:",
+                classes_sequence_to_letters(sequence_pred, self.position_specific_classes_enc),
             )
+            print(
+                "expected   SP_TYPE:", self.sp_types_enc.inverse_transform([expected_sp_type])[0][0]
+            )
+            print("prediction SP_TYPE:", self.sp_types_enc.inverse_transform([sp_type_pred])[0][0])
 
 
 def build_set(max_length=0, dataset_path="train_set.fasta"):
@@ -106,7 +119,10 @@ def build_set(max_length=0, dataset_path="train_set.fasta"):
         output_class_sequence.append(
             classes_sequence_from_ann_sequence(ann_sequence.seq, position_specific_classes_enc)
         )
-        output_sp_type.append(np.squeeze(sp_types_encoder.transform([[sp_type]]).todense()))
+        output_sp_type_single = np.squeeze(
+            np.array(sp_types_encoder.transform([[sp_type]]).todense())
+        )
+        output_sp_type.append(output_sp_type_single)
 
     return (
         np.array(input_tensors),
@@ -134,7 +150,9 @@ def build_model():
     crf = crf_raw(cnn3)
     crf_loss = ConditionalRandomFieldLoss(crf_raw)
 
-    outputs = {"crf": crf}
+    sp_type_out = layers.Dense(4, activation="relu", name="sp_type")(crf)
+
+    outputs = {"crf": crf, "sp_type": sp_type_out}
     model = keras.Model(inputs=[sequence_input, kingdom_input], outputs=outputs)
 
     return (model, crf_loss)
@@ -144,12 +162,25 @@ def train_model(model, crf_loss):
     model.summary()
 
     opt = keras.optimizers.SGD(0.005)
-    model.compile(optimizer=opt, loss={"crf": crf_loss}, metrics=["acc"])
-
-    (vld_input_sequences, vld_input_kingdoms, vld_output_class_sequence, _, vld_ids) = build_set(
-        max_length=0, dataset_path="benchmark_set.fasta"
+    model.compile(
+        optimizer=opt,
+        loss={
+            "crf": crf_loss,
+            "sp_type": tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+        },
+        metrics=["acc"],
     )
-    (input_sequences, input_kingdoms, output_class_sequence, _, _) = build_set(max_length=0)
+
+    (
+        vld_input_sequences,
+        vld_input_kingdoms,
+        vld_output_class_sequence,
+        vld_output_sp_types,
+        vld_ids,
+    ) = build_set(max_length=0, dataset_path="benchmark_set.fasta")
+    (input_sequences, input_kingdoms, output_class_sequence, output_sp_types, _) = build_set(
+        max_length=0
+    )
 
     callbacks = [
         keras.callbacks.ModelCheckpoint(
@@ -159,16 +190,18 @@ def train_model(model, crf_loss):
             vld_input_sequences,
             vld_input_kingdoms,
             vld_output_class_sequence,
+            vld_output_sp_types,
             vld_ids,
             position_specific_classes_enc,
+            sp_types_encoder,
         ),
     ]
     model.fit(
         {"aa_sequence": input_sequences, "kingdom": input_kingdoms},
-        {"crf": output_class_sequence},
+        {"crf": output_class_sequence, "sp_type": output_sp_types},
         validation_data=(
             {"aa_sequence": vld_input_sequences, "kingdom": vld_input_kingdoms},
-            {"crf": vld_output_class_sequence},
+            {"crf": vld_output_class_sequence, "sp_type": vld_output_sp_types},
         ),
         epochs=100,
         batch_size=128,
