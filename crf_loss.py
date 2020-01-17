@@ -28,11 +28,17 @@ from tensorflow_addons.utils import keras_utils
 
 #  @keras_utils.register_keras_custom_object
 class ConditionalRandomFieldLoss(object):
+    def __init__(self, crf_layer):
+        self.crf_layer = crf_layer
+
+        super().__init__()
+
     def get_config(self):
         return {}
 
     def __call__(self, y_true, y_pred, sample_weight=None):
-        crf_layer = y_pred._keras_history[0]
+        #  crf_layer = y_pred._keras_history[0]
+        crf_layer = self.crf_layer
 
         # check if last layer is CRF
         if not isinstance(crf_layer, CRF):

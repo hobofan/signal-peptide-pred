@@ -6,19 +6,17 @@ authors = ["Maximilian Goisser <goisser94@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-tf-estimator-nightly = {version = "=2.0.0.dev2019112709", allows-prereleases = true}
-tf-nightly = {version = "=2.1.0.dev20191127", allows-prereleases = true}
+tf-estimator-nightly = {version = "=2.0.0.dev2019112709", allow-prereleases = true}
+tf-nightly = {version = "=2.1.0.dev20191127", allow-prereleases = true}
 biopython = "^1.75"
 pandas = "^0.25.3"
 numpy = "^1.17"
 scikit-learn = "^0.21.3"
-tfa-nightly = {version = "=0.7.0.dev20191127", allows-prereleases = true}
+tfa-nightly = {version = "=0.7.0.dev20191127", allow-prereleases = true}
 cachetools = "^3.1"
 flake8 = "^3.7"
-keras = "^2.3"
-keras_contrib = {git = "https://github.com/keras-team/keras-contrib.git"}
 [tool.poetry.dev-dependencies]
-black = {version = "^18.3-alpha.0", allows-prereleases = true}
+black = {version = "^18.3-alpha.0", allow-prereleases = true}
 
 [tool.black]
 line-length = 100
