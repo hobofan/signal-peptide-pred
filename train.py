@@ -7,6 +7,7 @@ from tensorflow.keras import layers
 import random
 import numpy as np
 import tensorflow as tf
+from keras_ordered_neurons import ONLSTM
 
 from constants import Kingdom, SPType, PositionSpecificLetter
 from data_transform import (
@@ -140,9 +141,10 @@ def build_model():
         layers.Conv1D(32, (3), padding="causal", activation="relu")(sequence_input)
     )
     cnn1_plus_kingdom = layers.concatenate([cnn1, kingdom_input])
-    bi_lstm = layers.Bidirectional(layers.LSTM(64, return_sequences=True), merge_mode="mul")(
-        cnn1_plus_kingdom
-    )
+    bi_lstm = layers.Bidirectional(
+        ONLSTM(units=64, chunk_size=4, recurrent_dropconnect=0.2, return_sequences=True),
+        merge_mode="mul",
+    )(cnn1_plus_kingdom)
     cnn2 = layers.Dropout(0.1)(layers.Conv1D(64, (5), padding="causal", activation="relu")(bi_lstm))
     # 9 = "matching the number of position-specific classes"
     cnn3 = layers.Dropout(0.1)(layers.Conv1D(9, (1), padding="causal", activation="relu")(cnn2))
